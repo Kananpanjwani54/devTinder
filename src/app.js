@@ -6,15 +6,21 @@ const app=express();
 
 //route handler
 
-app.get("/",(req,res)=>{
-res.send("Hello from Server of kanan!!")
-});
+// app.use("/",(req,res)=>{
+// res.send("Hello from Server of kanan!!")
+// });
 app.use("/test",(req,res)=>{
 res.send("Main jian!")
 });
-app.use("/hello",(req,res)=>{
-res.send("Main Honn don!")
-});
+// app.use("/hello",(req,res)=>{
+// res.send("Main Honn don!")
+// });
+// app.use("/hello/123",(req,res)=>{
+// res.send("Main Honn don 2!")
+// });
+app.get("/hello", (req, res) => res.send("Just hello"));
+app.get("/hello/:id", (req, res) => res.send("Hello with id"));
+
 const PORT=3000;
 
 //
