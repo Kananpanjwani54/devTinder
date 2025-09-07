@@ -125,32 +125,39 @@
 
 // ✅ Middleware for checking admin authorization
 const express = require("express");
-const { adminAuth,userAuth } = require("./middleware/auth");  // ✅ relative path
+// const { adminAuth,userAuth } = require("./middleware/auth");  // ✅ relative path
 
-const app = express();
+// const app = express();
 
-// ✅ Apply middleware globally to all /admin routes
-app.use("/admin", adminAuth);
-app.use("/user",userAuth);
-//  Routes
-app.get("/admin/login", (req, res) => {
-  console.log("app data sent");
-  res.send("All Data Sent");
-});
-app.get("/user",userAuth,(req, res) => {
-  console.log("USER  data sent");
-  res.send("User Data Sent");
-});
+// // ✅ Apply middleware globally to all /admin routes
+// app.use("/admin", adminAuth);
+// app.use("/user",userAuth);
+// //  Routes
+// app.get("/admin/login", (req, res) => {
+//   console.log("app data sent");
+//   res.send("All Data Sent");
+// });
+// app.get("/user",userAuth,(req, res) => {
+//   console.log("USER  data sent");
+//   res.send("User Data Sent");
+// });
 
-app.get("/admin/getAllData", (req, res) => {
-  console.log("app data sent");
-  res.send("All Data Sent");
-});
+// app.get("/admin/getAllData", (req, res) => {
+//   console.log("app data sent");
+//   res.send("All Data Sent");
+// });
 
-app.get("/admin/deleteUser", (req, res) => {
-  console.log("app data deleted");
-  res.send("Deleted a user");
-});
+// app.get("/admin/deleteUser", (req, res) => {
+//   console.log("app data deleted");
+//   res.send("Deleted a user");
+// });
+
+//Error
+
+
+
+
+
 
 // ✅ Start server
 app.listen(3000, () => {
