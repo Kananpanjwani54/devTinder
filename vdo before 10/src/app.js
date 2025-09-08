@@ -84,95 +84,95 @@ res.status(400).send("Error"+err.message)
 })
 
 // // accessing data usinf email
-// app.get("/user", async (req, res) => {
-//   try {
-//     // Corrected to use req.query for GET requests
-//     const firstName = req.query.firstName;
-//     const users = await User.find({ firstName: firstName });
+app.get("/user", async (req, res) => {
+  try {
+    // Corrected to use req.query for GET requests
+    const firstName = req.query.firstName;
+    const users = await User.find({ firstName: firstName });
 
-//     if (!users || users.length === 0) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     console.log(users);
-//     res.json(users); // send matching users
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error fetching user");
-//   }
-// });
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(users);
+    res.json(users); // send matching users
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching user");
+  }
+});
 
-// // all users get
-// app.get("/feed", async (req, res) => {
-//   try {
-//     const users = await User.find({});
+// all users get
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
 
-//     if (!users || users.length === 0) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     console.log(users);
-//     res.json(users); // send matching users
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error fetching user");
-//   }
-// });
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(users);
+    res.json(users); // send matching users
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching user");
+  }
+});
 
-// // delete user by id
-// app.delete("/user/:id", async (req, res) => {
-//   try {
-//     const userId = req.params.id;
-//     const deletedUser = await User.findByIdAndDelete(userId);
+// delete user by id
+app.delete("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(userId);
     
-//     if (!deletedUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-//     res.json({ message: "User deleted successfully", user: deletedUser });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Error deleting user" });
-//   }
-// });
+    res.json({ message: "User deleted successfully", user: deletedUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error deleting user" });
+  }
+});
 
-// // update user by id
-// app.patch("/user/:id", async (req, res) => {
-//   const userId = req.params.id;
-//   const data = req.body;
+// update user by id
+app.patch("/user/:id", async (req, res) => {
+  const userId = req.params.id;
+  const data = req.body;
 
-//   try {
-//     const ALLOWED_UPDATES = ["skills", "profilePic", "about", "gender", "firstName"];
-//     console.log("Yaha h");
+  try {
+    const ALLOWED_UPDATES = ["skills", "profilePic", "about", "gender", "firstName"];
+    console.log("Yaha h");
 
-//     const isUpdateAllowed = Object.keys(data).every((k) =>
-//       ALLOWED_UPDATES.includes(k)
-//     );
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
 
-//     if (!isUpdateAllowed) {
-//       return res.status(400).send("Update not allowed");
-//     }
+    if (!isUpdateAllowed) {
+      return res.status(400).send("Update not allowed");
+    }
 
-//     if (data?.skills && data.skills.length > 10) {
-//       return res.status(400).send("Skills can't be more than 10");
-//     }
+    if (data?.skills && data.skills.length > 10) {
+      return res.status(400).send("Skills can't be more than 10");
+    }
 
-//     const updatedUser = await User.findByIdAndUpdate(
-//       userId,
-//       data,
-//       { new: true, runValidators: true }
-//     );
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      data,
+      { new: true, runValidators: true }
+    );
 
-//     console.log("Yaha h 2");
+    console.log("Yaha h 2");
 
-//     if (!updatedUser) {
-//       return res.status(404).send("User not found");
-//     }
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
+    }
 
-//     console.log("Yaha h 3");
-//     res.json({ message: "User Updated", user: updatedUser });
-//   } catch (err) {
-//     res.status(400).send("WRONG: " + err.message);
-//   }
-// });
+    console.log("Yaha h 3");
+    res.json({ message: "User Updated", user: updatedUser });
+  } catch (err) {
+    res.status(400).send("WRONG: " + err.message);
+  }
+});
 
 // Add validations to inserting data 
 // hw -->skills
