@@ -1,165 +1,209 @@
-// const express = require("express");
-
-// // create app
-// const app = express();
-
-
-// // GET route
-// app.get("/user", (req, res) => {
-//   res.send({ firstname: "Kanan", lastname: "Panjwani" });
-// });
-
-// // POST route (save user)
-// app.post("/user", async (req, res) => {
-//   console.log(req.body);
-//   res.send("Data successfully saved to database!");
-// });
-
-// // DELETE route (delete by id)
-// app.delete("/user", async (req, res) => {
-//   res.send(`Data successfully deleted`);
-// });
-
-
-// // parameter req
-// app.get("/user/:userId", (req, res) => {
-//     console.log(req.params);
-//     // console.log(req.params.password);
-
-//     // { userId: '100' }
-//     res.send(`User ID is ${req.params.userId}`);
-// });
-
-
-//multiple param req
-// app.get("/user/:userId/:password/:name", (req, res) => {
-//     console.log(req.params);
-//     // Example output: { userId: '100', password: 'abc123', name: 'kanan' }
-
-//     res.send(
-//         `User ID is ${req.params.userId}, Password is ${req.params.password}, Name is ${req.params.name}`
-//     );
-// });
-
-// app.get("/user", 
-//   (req, res, next) => {
-//     console.log("Handler 1");
-//     next(); // moves to Handler 2
-//   }, 
-//   (req, res, next) => {
-//     console.log("Handler 2");
-//     res.send("Final response from Handler 2");  //it will be printed 
-//   }
-// );
-
-//Array of Route handler
-// app.use("/test",[h1,h2],h3)
-
-
-// app.get("/test",[
-//   (req, res, next) => {
-//     console.log("Handler 1");
-//     next();
-    
-//   },
-//   (req, res, next) => {
-//     console.log("Handler 2");
-//     next();
-//   },
-//   (req, res, next) => {
-//     console.log("Handler 3");
-//     next();
-//   },
-//   (req, res) => {
-//     console.log("Handler 4");
-//     res.send("Response from last handler");
-//   }
-// ]);
-
-
-// Middleware applied on "/"
-// app.use("/", (req, res, next) => {
-//   // res.send("Handling / route");  // commented
-//   next();
-// });
-
-// app.get("/user", [
-//   (req, res, next) => {
-//     console.log("Handling /user route");
-//     // next();  // moves to next handler
-//   },
-//   (req, res, next) => {
-//     res.send("1st Route Handler");
-//     // ❌ if you don’t call next(), chain ends here
-//   },
-//   (req, res, next) => {
-//     res.send("2nd Route Handler");
-//   }
-// ]);
-
-//app.use -->use for middleware ,app.get-->route handler
-// app.use("/",(req,res,next)=>{
-//   // res.send("Handling / route");-->if 2 route responded then error
-
-//   next();
-// });
-// //chanining of middleware
-// app.get(
-//   "/user",
-//   (req, res, next) => {
-//     console.log("Handling /user route");
-//     next();
-//   },
-//   (req, res, next) => {
-//     res.send("1st Route Handler");
-//   },
-//   (req, res, next) => {
-//     res.send("2nd Route Handler");
-//   }
-// );
-
-
-
-//Notes-->Ab addmin data access karega to kaise pata chalega ki admin hi h isliye token check hua h 
-// aur middleware use hua h taki jitna bhi /admin ho wo acces ho jayeg
-
-// ✅ Middleware for checking admin authorization
 const express = require("express");
-// const { adminAuth,userAuth } = require("./middleware/auth");  // ✅ relative path
+const { connectDB } = require("./config/database");
+const { User } = require("./models/user"); // fixed import
+const { isValidObjectId } = require("mongoose");
+const bcrypt = require('bcrypt');
+const { validateSignUp } = require("./utils/helper");
+const cookieParser = require("cookie-parser");
+const jwt = require('jsonwebtoken');
 
-// const app = express();
+const app = express();
+app.use(express.json());
+// for cookie parsing middleware
+app.use(cookieParser());
 
-// // ✅ Apply middleware globally to all /admin routes
-// app.use("/admin", adminAuth);
-// app.use("/user",userAuth);
-// //  Routes
-// app.get("/admin/login", (req, res) => {
-//   console.log("app data sent");
-//   res.send("All Data Sent");
-// });
-// app.get("/user",userAuth,(req, res) => {
-//   console.log("USER  data sent");
-//   res.send("User Data Sent");
-// });
+const SECRET_KEY = "KAnan@#$"; // Moved up to be accessible by all routes
 
-// app.get("/admin/getAllData", (req, res) => {
-//   console.log("app data sent");
-//   res.send("All Data Sent");
-// });
+app.post("/signup", async (req, res) => {
+  try {
+    const { firstName, lastName, gmail, password, age, gender } = req.body;
 
-// app.get("/admin/deleteUser", (req, res) => {
-//   console.log("app data deleted");
-//   res.send("Deleted a user");
-// });
+    // Validate data
+    validateSignUp(req);
 
-//Error
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
 
+    const user = new User({
+      firstName,
+      lastName,
+      gmail,
+      password: passwordHash,
+      age,
+      gender
+    });
+    console.log(password);
 
-
-
-
-
-// ✅ Start server
-app.listen(3000, () => {
-  console.log("Server is listening on port 3000");
+    const savedUser = await user.save();
+    res.status(201).send("User Added Successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(400).send("Error posting data: " + err.message);
+  }
 });
+
+// login api creation 
+app.post("/login", async (req, res) => {
+  try {
+    const { gmail, password } = req.body;
+    // using gmail we r checking whther th mail exist in db or not
+    const user = await User.findOne({ gmail: gmail });
+    if (!user) {
+      return res.status(400).send("Invalid Credentials!");
+    }
+    const isPasswordvalid = await bcrypt.compare(password, user.password);
+    if (isPasswordvalid) {
+      // generate jwt token
+      const token = jwt.sign(
+        { userId: user._id },
+        SECRET_KEY,
+        { expiresIn: "24hr" }
+      );
+
+      // Add token to cookie and send the cookie to user with jwt 
+      res.cookie("token", token);
+      res.send("Login Successfull");
+    } else {
+      res.status(400).send("Invalid Credentials!");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(400).send("Error posting data: " + err.message);
+  }
+});
+
+// profile login 
+app.get("/profile", async (req, res) => {
+  try {
+    const cookie = req.cookies;
+    const { token } = cookie;
+    if (!token) {
+      return res.status(401).send("Invalid token: token is missing.");
+    }
+    
+    const decodemessage = await jwt.verify(token, SECRET_KEY);
+    // The token's payload key is "userId", so we must use that here.
+    const { userId } = decodemessage;
+
+    // Now check if this user exists in the database
+    const user = await User.findById(userId);
+    
+    console.log("logged in user is " + userId);
+    
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    // Send the user object as a JSON response
+    res.json(user);
+
+  } catch (err) {
+    console.error("Profile fetch error:", err.message);
+    res.status(401).send("Authentication failed: " + err.message);
+  }
+});
+
+// accessing data usinf email
+app.get("/user", async (req, res) => {
+  try {
+    // Corrected to use req.query for GET requests
+    const firstName = req.query.firstName;
+    const users = await User.find({ firstName: firstName });
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(users);
+    res.json(users); // send matching users
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching user");
+  }
+});
+
+// all users get
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(users);
+    res.json(users); // send matching users
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching user");
+  }
+});
+
+// delete user by id
+app.delete("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(userId);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User deleted successfully", user: deletedUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error deleting user" });
+  }
+});
+
+// update user by id
+app.patch("/user/:id", async (req, res) => {
+  const userId = req.params.id;
+  const data = req.body;
+
+  try {
+    const ALLOWED_UPDATES = ["skills", "profilePic", "about", "gender", "firstName"];
+    console.log("Yaha h");
+
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+
+    if (!isUpdateAllowed) {
+      return res.status(400).send("Update not allowed");
+    }
+
+    if (data?.skills && data.skills.length > 10) {
+      return res.status(400).send("Skills can't be more than 10");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      data,
+      { new: true, runValidators: true }
+    );
+
+    console.log("Yaha h 2");
+
+    if (!updatedUser) {
+      return res.status(404).send("User not found");
+    }
+
+    console.log("Yaha h 3");
+    res.json({ message: "User Updated", user: updatedUser });
+  } catch (err) {
+    res.status(400).send("WRONG: " + err.message);
+  }
+});
+
+// Add validations to inserting data 
+// hw -->skills
+
+connectDB()
+  .then(() => {
+    console.log("Db connection established...");
+    app.listen(3000, () => {
+      console.log("Server Connected on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.log("Hemlo error hain!", err);
+  });
