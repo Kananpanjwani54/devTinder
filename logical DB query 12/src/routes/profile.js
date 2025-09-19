@@ -1,9 +1,9 @@
 const express=require("express")
 
-const profileRoutes=express.Router();
+const profileRouter=express.Router();
 const userauth= require("../middleware/auth");
 const { ValidateEditUpdate } = require("../utils/helper");
-profileRoutes.get("/profile/view", userauth, async (req, res) => {
+profileRouter.get("/profile/view", userauth, async (req, res) => {
   try {
     const user = req.user;
     res.send(user);
@@ -12,7 +12,7 @@ profileRoutes.get("/profile/view", userauth, async (req, res) => {
     res.status(400).send({ error: "Error: " + err.message });
   }
 });
-profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+profileRouter.patch("/profile/edit", userauth, async (req, res) => {
   try {
     if (!validateProfileData(req)) {
       throw new Error("Update not allow");
@@ -37,4 +37,4 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 });
 
-module.exports = profileRoutes;
+module.exports = profileRouter;

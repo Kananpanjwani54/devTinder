@@ -11,14 +11,14 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-const profileRoutes = require("./routes/profile");
+const profileRouter = require("./routes/profile");
 const authRoutes = require("./routes/auth");
 const requestConnections = require("./routes/requests");
 
 
 // Use routes with appropriate prefixes
 app.use("/auth", authRoutes);
-app.use("/profile", profileRoutes);
+app.use("/profile", profileRouter);
 app.use("/requests", requestConnections);
 
 // Connect to DB and start server

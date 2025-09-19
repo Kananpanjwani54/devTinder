@@ -12,7 +12,7 @@ profileRoutes.get("/profile/view", userauth, async (req, res) => {
     res.status(400).send({ error: "Error: " + err.message });
   }
 });
-profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+profileRoutes.patch("/profile/edit", userauth, async (req, res) => {
   try {
     if (!validateProfileData(req)) {
       throw new Error("Update not allow");
