@@ -29,19 +29,18 @@ const isTokenValid = async (token) => {
   return decodedMessage;
 };
 
-const ValidateEditUpdate = (req) => {
+const ValidateEditUpdate = (data) => {
   const allowedUpdates = ["firstName", "lastName", "gmail", "age", "gender", "skills", "profilePic"];
-  const updates = Object.keys(req.body);
+  const updates = Object.keys(data);
 
   const isValid = updates.every((field) => allowedUpdates.includes(field));
 
   if (!isValid) {
-    throw new Error("Invalid fields in update request!");
+    return { error: new Error("Invalid fields in update request!") };
   }
 
-  return isValid;
+  return { error: null };
 };
-
 
 module.exports = {
   validateSignUp,

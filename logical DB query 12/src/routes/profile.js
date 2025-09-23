@@ -1,40 +1,44 @@
-const express=require("express")
-
-const profileRouter=express.Router();
-const userauth= require("../middleware/auth");
+const express = require("express");
+const profileRouter = express.Router();
+const userauth = require("../middleware/auth");
 const { ValidateEditUpdate } = require("../utils/helper");
+const { User } = require("../models/user");
+
 profileRouter.get("/profile/view", userauth, async (req, res) => {
   try {
     const user = req.user;
-    res.send(user);
+    res.status(200).json(user);
   } catch (err) {
-    // FIXED: Consistent JSON error response
-    res.status(400).send({ error: "Error: " + err.message });
+    res.status(400).json({ error: "Error: " + err.message });
   }
 });
-profileRouter.patch("/profile/edit", userauth, async (req, res) => {
+profileRouter.patch("/edit", userauth, async (req, res) => {
   try {
-    if (!validateProfileData(req)) {
-      throw new Error("Update not allow");
+    // ✅ Validate fields
+    const { error } = ValidateEditUpdate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
     }
 
-    const loggedInUser = req.user;
-    console.log("hi")
-    Object.keys(req.body).forEach(
-      (field) => (loggedInUser[field] = req.body[field])
-    );
+    const loggedInUser = req.user; // from userauth middleware
+
+    // ✅ Update allowed fields only
+    Object.keys(req.body).forEach((field) => {
+      loggedInUser[field] = req.body[field];
+    });
 
     await loggedInUser.save();
-    // Save with validation
-    await loggedInUser.save();
 
-    console.log("After update:", loggedInUser);
-
-    res.send(`${loggedInUser.firstName}, your profile was updated successfully`);
+    res.status(200).json({
+      message: `${loggedInUser.firstName}, your profile was updated successfully`,
+      user: loggedInUser,
+    });
   } catch (err) {
     console.error("Update error:", err.message);
-    res.status(400).send({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 });
 
 module.exports = profileRouter;
+
+

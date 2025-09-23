@@ -11,7 +11,7 @@ const SECRET_KEY = "KAnan@#$";
 
 authRoutes.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, gmail, password, age, gender } = req.body;
+    const { firstName, lastName, gmail, password, age, gender} = req.body;
 
     // Validate data
     validateSignUp(req);
@@ -57,7 +57,7 @@ authRoutes.post("/login", async (req, res) => {   // ✅ FIX: removed userauth m
 
       // Add token to cookie and send the cookie to user with jwt 
       res.cookie("token", token);
-      res.send("Login Successfull");
+      res.send(user);
     } else {
       res.status(400).send("Invalid Credentials!");
     }
@@ -67,10 +67,16 @@ authRoutes.post("/login", async (req, res) => {   // ✅ FIX: removed userauth m
   }
 });
 //logout api
-authRoutes.post("/logout",async (req,res)=>{
-    res.clearCookie("token");
-    res.send("Logout Sucessfull!")
-})
+authRoutes.post("/logout", userauth, async (req, res) => {
+  const user = req.user;       // from token
+  const token = req.token;     // token used in this session
 
+  // remove this token from DB
+  user.tokens = user.tokens.filter(t => t.token !== token);
+  await user.save();
+
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logout successful!" });
+});
 
 module.exports = authRoutes;

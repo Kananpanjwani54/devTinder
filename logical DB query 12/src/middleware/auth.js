@@ -27,6 +27,7 @@ const userauth = async (req, res, next) => {
 
     // attach user to request for later use
     req.user = user;
+    // console.log(user)
     next();
   } catch (err) {
     console.error(err);
