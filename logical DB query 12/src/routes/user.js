@@ -1,7 +1,7 @@
 //here api for users will be created where i can see pending request 
 const express =require('express')
 const userRouter=express.Router();
-
+const { User } = require("../models/user");
 const userauth= require("../middleware/auth")
 const ConnectionRequest=require("../models/connectionRequest")
 const user_data=" firstName lastname gender skills about "
@@ -54,9 +54,52 @@ userRouter.get("/connections", userauth, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-// userRouter.get("/feed",userauth, async(req,res)=>{
-//   //here User should see all card except :-
-  
-// })
-module.exports=userRouter
+
+userRouter.get("/feed", userauth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+
+  //bec somone can input negative vale 
+const page = Math.max(1, parseInt(req.query.page) || 1);
+let limit = Math.min(50, parseInt(req.query.limit) || 10);
+ 
+limit=limit>50?50:limit;
+const skip=(page-1)*limit;
+
+
+    // Find all connection requests (sent + received)
+    const connectionRequest = await ConnectionRequest.find({
+      $or: [
+        { fromUserId: loggedInUser._id },
+        { toUserId: loggedInUser._id }
+      ]
+    }).select("fromUserId toUserId");
+
+    // Hide users (unique IDs using Set)
+    const hideUsersFromFeed = new Set();
+    hideUsersFromFeed.add(loggedInUser._id.toString());
+
+    connectionRequest.forEach(reqItem => {
+      hideUsersFromFeed.add(reqItem.fromUserId.toString());
+      hideUsersFromFeed.add(reqItem.toUserId.toString());
+    });
+
+    // console.log(hideUsersFromFeed);
+
+    // Get users not in hideUsersFromFeed
+    const users = await User.find({
+      _id: { $nin: Array.from(hideUsersFromFeed) }
+    }).select(usersafedata)
+    .skip(skip)
+    .limit(limit);
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Feed error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = userRouter;
+
 
