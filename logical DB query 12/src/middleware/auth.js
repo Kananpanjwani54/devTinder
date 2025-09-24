@@ -10,7 +10,7 @@ const userauth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      return res.status(401).send("Invalid token: token is missing.");
+      return res.status(401).send("Please Log In.");
     }
 
     // verify token
