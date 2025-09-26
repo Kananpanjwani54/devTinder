@@ -31,7 +31,7 @@ const userSchema = new Schema(
     gender: {
       type: String,
       enum: {
-        values: ["Male", "Female", "others"],
+        values: ["Male", "Female", "Others"],
         message: "{VALUE} is not supported"
       },
       required: true
@@ -52,13 +52,15 @@ const userSchema = new Schema(
       default: "This is by default!",
       trim: true
     },
-    profilePic: {
-      type: String,
-      default: "https://example.com/default-profile.png",
-      trim: true
-    },
+  profilePic: {
+  type: String,
+  default: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg",
+  trim: true
+}
+,
     skills: {
-      type: [String]
+      type: [String],
+      default:[]
     }
   },
   { 

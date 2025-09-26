@@ -67,14 +67,7 @@ authRoutes.post("/login", async (req, res) => {   // ✅ FIX: removed userauth m
   }
 });
 //logout api
-authRoutes.post("/logout", userauth, async (req, res) => {
-  const user = req.user;       // from token
-  const token = req.token;     // token used in this session
-
-  // remove this token from DB
-  user.tokens = user.tokens.filter(t => t.token !== token);
-  await user.save();
-
+authRoutes.post("/logout", (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Logout successful!" });
 });

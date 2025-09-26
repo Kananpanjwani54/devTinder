@@ -4,9 +4,9 @@ const userRouter=express.Router();
 const { User } = require("../models/user");
 const userauth= require("../middleware/auth")
 const ConnectionRequest=require("../models/connectionRequest")
-const user_data=" firstName lastname gender skills about "
 
-const usersafedata="firstName lastName photoUrl age gender skills"
+
+const usersafedata="firstName lastName about age gender skills profilePic"
 //get all connection request received
 userRouter.get("/request/received", userauth, async (req, res) => {
   try {

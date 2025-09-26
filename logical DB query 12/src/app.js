@@ -21,6 +21,12 @@ const corsOptions = {
 // Apply CORS middleware (also handles preflight requests)
 app.use(cors(corsOptions));
 
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
+
 // Routes
 const profileRouter = require("./routes/profile");
 const authRoutes = require("./routes/auth");

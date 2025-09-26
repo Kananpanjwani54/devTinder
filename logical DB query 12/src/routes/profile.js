@@ -17,7 +17,7 @@ profileRouter.patch("/edit", userauth, async (req, res) => {
     // ✅ Validate fields
     const { error } = ValidateEditUpdate(req.body);
     if (error) {
-      return res.status(400).json({ error: error.details[0].message });
+      return res.status(400).json({ error:error.details? error.details[0].message:error.message });
     }
 
     const loggedInUser = req.user; // from userauth middleware
@@ -30,7 +30,7 @@ profileRouter.patch("/edit", userauth, async (req, res) => {
     await loggedInUser.save();
 
     res.status(200).json({
-      message: `${loggedInUser.firstName}, your profile was updated successfully`,
+      message: `${loggedInUser.firstName}, profile updated`,
       user: loggedInUser,
     });
   } catch (err) {

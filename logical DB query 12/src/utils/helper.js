@@ -30,7 +30,7 @@ const isTokenValid = async (token) => {
 };
 
 const ValidateEditUpdate = (data) => {
-  const allowedUpdates = ["firstName", "lastName", "gmail", "age", "gender", "skills", "profilePic"];
+  const allowedUpdates = ["firstName", "lastName", "gmail", "age", "gender", "skills", "profilePic","about"];
   const updates = Object.keys(data);
 
   const isValid = updates.every((field) => allowedUpdates.includes(field));
