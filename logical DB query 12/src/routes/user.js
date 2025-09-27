@@ -15,8 +15,8 @@ userRouter.get("/request/received", userauth, async (req, res) => {
     const connectionRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested"
-    }).populate("fromUserId",user_data)
-      .populate("toUserId",user_data)
+    }).populate("fromUserId",usersafedata)
+      .populate("toUserId",usersafedata)
     res.json({
       message: "Data fetched successfully",
       data: connectionRequests
@@ -29,7 +29,7 @@ userRouter.get("/request/received", userauth, async (req, res) => {
 userRouter.get("/connections", userauth, async (req, res) => {
     try {
         const loggedInUser = req.user;
-        const userFields = "firstName lastName age gender skills status about profilePicture"; // Define fields to populate
+        const userFields = "firstName lastName age gender skills status about profilePic"; // Define fields to populate
 
         const connectionRequests = await ConnectionRequest.find({
             $or: [
