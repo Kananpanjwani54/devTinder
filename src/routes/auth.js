@@ -6,7 +6,6 @@ const { validateSignUp } = require("../utils/helper");
 const jwt = require('jsonwebtoken');
 const {User} = require("../models/user");   // ✅ FIX: Added User model import
 const userauth = require("../middleware/auth");
-const { SetIdentityHeadersInNotificationsEnabledCommand } = require("@aws-sdk/client-ses");
 
 const SECRET_KEY = "KAnan@#$";
 
@@ -74,6 +73,3 @@ authRoutes.post("/logout", (req, res) => {
 });
 
 module.exports = authRoutes;
-
-
-SetIdentityHeadersInNotificationsEnabledCommand
