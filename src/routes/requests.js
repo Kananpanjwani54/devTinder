@@ -5,6 +5,8 @@ const { User } = require("../models/user");
 const { default: mongoose } = require('mongoose');
 
 const requestRouter = express.Router();
+const sendEmail=require("../utils/sendEmail")
+
 
 // ------------------ SEND REQUEST ------------------
 requestRouter.post("/send/:status/:toUserId", userauth, async (req, res) => {
@@ -60,16 +62,34 @@ requestRouter.post("/send/:status/:toUserId", userauth, async (req, res) => {
 
     await connectionRequest.save();
 
-    if (status === "interested") {
-      res.status(200).json({
-        message: `${currentUser.firstName} is interested in ${toUser.firstName}`,
-      });
-    } else {
-      res.status(200).json({ message: "User ignored" });
-    }
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
+//     if (status === "interested") {
+//       const emailRes=await sendEmail.run();
+//       console.log(emailRes);
+
+//       res.status(200).json({
+//         message: `${currentUser.firstName} is interested in ${toUser.firstName}`,
+//       });
+//     } else {
+//       res.status(200).json({ message: "User ignored" });
+//     }
+//   } catch (err) {
+//     return res.status(500).json({ error: err.message });
+//   }
+// });
+  if (status === "interested") {
+    const emailRes = await sendEmail.run(); // or sesClient.send(...)
+    console.log("Email sent:", emailRes);
+
+    return res.status(200).json({
+      message: `${currentUser.firstName} is interested in ${toUser.firstName}`,
+    });
   }
+
+  return res.status(200).json({ message: "User ignored" });
+} catch (err) {
+  console.error("Error sending email:", err);
+  return res.status(500).json({ error: err.message });
+}
 });
 
 // ------------------ REVIEW REQUEST ------------------
@@ -114,3 +134,4 @@ requestRouter.post("/review/:status/:requestId", userauth, async (req, res) => {
 
 
 module.exports = requestRouter;
+

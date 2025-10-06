@@ -4,7 +4,7 @@
 const jwt = require("jsonwebtoken");
 const {User} = require("../models/user");
 
-const SECRET_KEY = "KAnan@#$";
+// const SECRET_KEY = "KAnan@#$";
 
 const userauth = async (req, res, next) => {
   try {
@@ -14,7 +14,7 @@ const userauth = async (req, res, next) => {
     }
 
     // verify token
-    const decoded = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { userId } = decoded;
 
     // check user in DB

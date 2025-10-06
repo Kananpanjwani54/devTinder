@@ -2,7 +2,8 @@
 const mongoose =require('mongoose')
 
 const connectDB= async()=>{
-    await mongoose.connect("mongodb+srv://kanan_db:P%40njwani54@cluster0.tvikiqx.mongodb.net/devTinder")
+    console.log(process.env.DB_CONNECTION_SECRET)
+    await mongoose.connect(process.env.DB_CONNECTION_SECRET)
 };
 
 module.exports={
