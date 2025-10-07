@@ -6,7 +6,7 @@ const { default: mongoose } = require('mongoose');
 
 const requestRouter = express.Router();
 
-const sendEmail=require("../utils/sendEmail")
+// const sendEmail=require("../utils/sendEmail")
 
 
 // ------------------ SEND REQUEST ------------------
@@ -64,8 +64,8 @@ requestRouter.post("/send/:status/:toUserId", userauth, async (req, res) => {
     await connectionRequest.save();
 
   if (status === "interested") {
-    const emailRes = await sendEmail.run(); 
-    console.log("Email sent:", emailRes);
+    // const emailRes = await sendEmail.run(); 
+    // console.log("Email sent:", emailRes);
 
     return res.status(200).json({
       message: `${currentUser.firstName} is interested in ${toUser.firstName}`,

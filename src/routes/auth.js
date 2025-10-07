@@ -5,9 +5,8 @@ const authRoutes = express.Router();
 const { validateSignUp } = require("../utils/helper");
 const jwt = require('jsonwebtoken');
 const {User} = require("../models/user");   // ✅ FIX: Added User model import
-const userauth = require("../middleware/auth");
 
-const SECRET_KEY = "KAnan@#$";
+const SECRET_KEY="KAnan@#$"
 
 authRoutes.post("/signup", async (req, res) => {
   try {
@@ -29,7 +28,8 @@ authRoutes.post("/signup", async (req, res) => {
     });
 
     const savedUser = await user.save();
-    res.status(201).send("User Added Successfully");
+    
+    res.json({ message: "User Added successfully!", data: savedUser });
   } catch (err) {
     console.error(err);
     res.status(400).send("Error posting data: " + err.message);

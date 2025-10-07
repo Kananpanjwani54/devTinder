@@ -2,7 +2,7 @@ const express = require("express");
 const profileRouter = express.Router();
 const userauth = require("../middleware/auth");
 const { ValidateEditUpdate } = require("../utils/helper");
-const { User } = require("../models/user");
+
 
 profileRouter.get("/profile/view", userauth, async (req, res) => {
   try {
