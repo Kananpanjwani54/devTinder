@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require("express");
 const { connectDB } = require("./config/database");
 const bcrypt = require("bcrypt"); // Optional unless used here
 const cookieParser = require('cookie-parser');
 const cors=require('cors')
-require('dotenv').config();
 const app = express();
 
 
