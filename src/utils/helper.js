@@ -25,7 +25,7 @@ const validateSignUp = (req) => {
 };
 
 const isTokenValid = async (token) => {
-  const decodedMessage = jwt.verify(token,"KAnan@#$");
+  const decodedMessage = jwt.verify(token,process.env.JWT_SECRET);
   return decodedMessage;
 };
 
