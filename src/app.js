@@ -13,10 +13,8 @@ app.use(cookieParser());
 //used to get cookies in application 
 
 const corsOptions = {
-  origin: [
-    "http://localhost:5173",          // Your local frontend URL
-    "https://thedevconnect.co.in"     // Your production frontend URL
-  ],
+  origin: 
+    "http://localhost:5173",          // Your local frontend URL,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
