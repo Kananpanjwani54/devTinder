@@ -13,10 +13,13 @@ app.use(cookieParser());
 //used to get cookies in application 
 
 const corsOptions = {
-  origin: "http://localhost:5173",                 // frontend URL
-  credentials: true,                               // allow cookies
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allowed HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"],              // headers allowed from client
+  origin: [
+    "http://localhost:5173",          // Your local frontend URL
+    "https://thedevconnect.co.in"     // Your production frontend URL
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 // Apply CORS middleware (also handles preflight requests)
