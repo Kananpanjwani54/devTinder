@@ -6,7 +6,7 @@ const { validateSignUp } = require("../utils/helper");
 const jwt = require('jsonwebtoken');
 const {User} = require("../models/user");   // ✅ FIX: Added User model import
 
-const SECRET_KEY="KAnan@#$"
+// const SECRET_KEY="KAnan@#$"
 
 authRoutes.post("/signup", async (req, res) => {
   try {
@@ -52,7 +52,7 @@ authRoutes.post("/login", async (req, res) => {   // ✅ FIX: removed userauth m
       // generate jwt token
       const token = jwt.sign(
         { userId: user._id },
-        SECRET_KEY
+        process.env.JWT_SECRET
       );
 
       // Add token to cookie and send the cookie to user with jwt 
