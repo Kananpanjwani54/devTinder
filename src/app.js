@@ -15,7 +15,7 @@ app.use(cookieParser());
 const corsOptions = {
   origin: [
     "http://localhost:5173",              // local frontend
-    "https://devtinder-c08i.onrender.com" // your deployed frontend (replace with your real URL)
+    "https://devtinderweb-frontend.onrender.com" // your deployed frontend (replace with your real URL)
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
